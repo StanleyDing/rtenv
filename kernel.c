@@ -39,13 +39,13 @@ size_t strlen(const char *s) __attribute__ ((naked));
 size_t strlen(const char *s)
 {
     asm(
-            "	sub  r3, r0, #1			\n"
+            "	sub  r3, r0, #1		\n"
             "strlen_loop:               \n"
-            "	ldrb r2, [r3, #1]!		\n"
-            "	cmp  r2, #0				\n"
+            "	ldrb r2, [r3, #1]!	\n"
+            "	cmp  r2, #0		\n"
             "   bne  strlen_loop        \n"
-            "	sub  r0, r3, r0			\n"
-            "	bx   lr					\n"
+            "	sub  r0, r3, r0		\n"
+            "	bx   lr			\n"
             :::
        );
 }
@@ -1122,7 +1122,7 @@ int main()
         tasks[current_task].status = TASK_READY;
         timeup = 0;
 
-        switch (tasks[current_task].stack->r7) {
+        switch (tasks[current_task].stack->r8) {
             case 0x1: /* fork */
                 if (task_count == TASK_LIMIT) {
                     /* Cannot create a new task, return error */
@@ -1206,8 +1206,8 @@ int main()
                 }
                 break;
             default: /* Catch all interrupts */
-                if ((int)tasks[current_task].stack->r7 < 0) {
-                    unsigned int intr = -tasks[current_task].stack->r7 - 16;
+                if ((int)tasks[current_task].stack->r8 < 0) {
+                    unsigned int intr = -tasks[current_task].stack->r8 - 16;
 
                     if (intr == SysTick_IRQn) {
                         /* Never disable timer. We need it for pre-emption */
