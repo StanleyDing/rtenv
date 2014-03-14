@@ -2,6 +2,7 @@
 #include "RTOSConfig.h"
 
 #include "syscall.h"
+#include "unit_test.h"
 
 #include <stddef.h>
 
@@ -1249,6 +1250,8 @@ int main()
             i++;
         current_task = task_pop(&ready_list[i])->pid;
     }
+
+    unit_test();
 
     return 0;
 }
