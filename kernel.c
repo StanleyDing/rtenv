@@ -8,6 +8,12 @@
 
 void *memcpy(void *dest, const void *src, size_t n);
 
+void *malloc(size_t size)
+{
+        static char m[1024] = {0};
+        return m;
+}
+
 int strcmp(const char *a, const char *b) __attribute__ ((naked));
 int strcmp(const char *a, const char *b)
 {
@@ -40,13 +46,13 @@ size_t strlen(const char *s) __attribute__ ((naked));
 size_t strlen(const char *s)
 {
     asm(
-            "	sub  r3, r0, #1			\n"
+            "	sub  r3, r0, #1		\n"
             "strlen_loop:               \n"
-            "	ldrb r2, [r3, #1]!		\n"
-            "	cmp  r2, #0				\n"
+            "	ldrb r2, [r3, #1]!	\n"
+            "	cmp  r2, #0		\n"
             "   bne  strlen_loop        \n"
-            "	sub  r0, r3, r0			\n"
-            "	bx   lr					\n"
+            "	sub  r0, r3, r0		\n"
+            "	bx   lr			\n"
             :::
        );
 }
@@ -1251,7 +1257,9 @@ int main()
         current_task = task_pop(&ready_list[i])->pid;
     }
 
+#ifdef DEBUG
     unit_test();
+#endif
 
     return 0;
 }

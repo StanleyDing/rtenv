@@ -79,17 +79,16 @@ qemudbg_remote_bg: main.bin $(QEMU_STM32)
 emu: main.bin
 	bash emulate.sh main.bin
 
-qemuauto: main.bin gdbscript
-	bash emulate.sh main.bin &
-	sleep 1
-	$(CROSS_COMPILE)gdb -x gdbscript&
-	sleep 5
-
-qemuauto_remote: main.bin gdbscript
-	bash emulate_remote.sh main.bin &
-	sleep 1
-	$(CROSS_COMPILE)gdb -x gdbscript&
-	sleep 5
+check: unit_test.c unit_test.h
+	$(MAKE) main.bin DEBUG_FLAGS=-DDEBUG
+	$(QEMU_STM32) -M stm32-p103 \
+	    -gdb tcp::3333 -S \
+	    -serial stdio \
+	    -kernel main.bin -monitor null >/dev/null &
+	$(CROSS_COMPILE)gdb -batch -x ./test/strlen.in
+	@mv -f gdb.txt ./test/log/strlen.txt
+	@echo
+	@pkill -9 $(notdir $(QEMU_STM32))
 
 clean:
 	rm -f *.elf *.bin *.list
